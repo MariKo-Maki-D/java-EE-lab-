@@ -3,6 +3,7 @@ package com.example.task_app_lab5.controller;
 import com.example.task_app_lab5.model.User_table;
 import com.example.task_app_lab5.reposiory.UserRepo;
 import com.example.task_app_lab5.service.PasswordForgotService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PasswordController {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private PasswordForgotService passwordForgotService;
     public PasswordController(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
@@ -40,13 +42,17 @@ public class PasswordController {
         userRepo.save(user);
         return "redirect:/profile";
     }
-    @PostMapping("/reset-password")
+    @PostMapping("/profile/reset-password")
     public String resetPassword(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User_table user = userRepo.findByUsername(username);
         passwordForgotService.sendNewPassword(user.getEmail());
-        model.addAttribute("message", "A new password has been sent to your email.");
-        model.addAttribute("error", "Failed to reset password. User not found.");
+        if (user != null) {
+            passwordForgotService.sendNewPassword(user.getEmail());
+            model.addAttribute("message", "A new password has been sent to your email.");
+        } else {
+            model.addAttribute("error", "Failed to reset password. User not found.");
+        }
         return "change-password";
     }
 }

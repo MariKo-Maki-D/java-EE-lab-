@@ -28,7 +28,4 @@ public class UserService implements UserDetailsService {
                 .roles("USER")
                 .build();
     }
-
-    public void savePhoto(String username, MultipartFile photo) {
-    }
 }
