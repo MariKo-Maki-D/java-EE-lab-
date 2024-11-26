@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Task</title>
+</head>
+<body>
+<h1>Edit Task</h1>
+<form th:action="@{/tasks/edit/{id}(id=${task.id})}" method="post">
+  <div>
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" th:value="${task.title}" required/>
+  </div>
+  <div>
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" th:value="${task.description}"/>
+  </div>
+  <div>
+    <label for="dueDate">Due Date:</label>
+    <input type="date" id="dueDate" name="dueDate" th:value="${task.dueDate}" required/>
+  </div>
+  <div>
+    <label for="priority">Priority:</label>
+    <select id="priority" name="priority">
+      <option th:value="Low" th:text="Low" th:selected="${task.priority == 'Low'}"></option>
+      <option th:value="Medium" th:text="Medium" th:selected="${task.priority == 'Medium'}"></option>
+      <option th:value="High" th:text="High" th:selected="${task.priority == 'High'}"></option>
+    </select>
+  </div>
+  <div>
+    <label for="category">Category:</label>
+    <select id="category" name="category.id" required>
+      <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${task.category.id == category.id}"></option>
+    </select>
+  </div>
+  <div>
+    <label for="status">Status:</label>
+    <select id="status" name="status" required>
+      <option value="Not Started">Not Started</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Completed">Completed</option>
+    </select>
+  </div>
+  <button type="submit">Save Changes</button>
+</form>
+</body>
+</html>
