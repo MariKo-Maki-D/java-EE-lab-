@@ -84,4 +84,6 @@ public class UserController {
         redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/profile";
     }
+
+
 }

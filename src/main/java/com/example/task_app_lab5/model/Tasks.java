@@ -1,5 +1,4 @@
 package com.example.task_app_lab5.model;
-
 import jakarta.persistence.*;
 import java.time.LocalDate;
 

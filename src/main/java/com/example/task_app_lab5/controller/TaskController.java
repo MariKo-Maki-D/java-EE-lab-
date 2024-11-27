@@ -6,6 +6,8 @@ import com.example.task_app_lab5.model.User_table;
 import com.example.task_app_lab5.reposiory.CategoryRepo;
 import com.example.task_app_lab5.reposiory.TaskRepo;
 import com.example.task_app_lab5.reposiory.UserRepo;
+import com.example.task_app_lab5.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,9 +26,22 @@ public class TaskController {
     private UserRepo  userRepo;
     @Autowired
     private CategoryRepo categoryRepository;
+    @Autowired
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
 
     @GetMapping("/tasks")
-    public String viewTasks(@AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String viewTasks(@AuthenticationPrincipal UserDetails userDetails, Model model,
+                            @RequestParam(value = "search", required = false) String search,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            @RequestParam(value = "size", defaultValue = "10") int size) {
+        Page tasksPage = taskService.getTasks(search, page, size);
+        model.addAttribute("tasksPage", tasksPage);
+        model.addAttribute("search", search);
         User_table user = userRepo.findByUsername(userDetails.getUsername());
         List<Tasks> tasks = taskRepository.findByUserId(user.getId());
         model.addAttribute("tasks", tasks);

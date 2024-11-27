@@ -2,6 +2,7 @@ package com.example.task_app_lab5.model;
 
 import jakarta.persistence.*;
 
+import javax.management.relation.Role;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,8 @@ public class User_table {
     private String email;
     private  byte[] photo;
     private LocalDate createdAt;
+    //@Enumerated
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Tasks> tasks;

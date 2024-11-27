@@ -98,5 +98,12 @@
         </td>
     </tr>
 </table>
+<div>
+    <span>Page: <span th:text="${tasksPage.number + 1}"></span> / <span th:text="${tasksPage.totalPages}"></span></span>
+    <div>
+        <a th:href="@{/tasks(search=${search}, page=${tasksPage.number - 1}, size=${tasksPage.size})}" th:if="${tasksPage.hasPrevious()}">Previous</a>
+        <a th:href="@{/tasks(search=${search}, page=${tasksPage.number + 1}, size=${tasksPage.size})}" th:if="${tasksPage.hasNext()}">Next</a>
+    </div>
+</div>
 </body>
 </html>
