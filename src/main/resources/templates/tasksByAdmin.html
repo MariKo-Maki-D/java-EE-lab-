@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Tasks</title>
+</head>
+<body>
+<h1>Tasks</h1>
+<form method="get" th:action="@{/tasks}">
+  <input type="text" name="search" placeholder="Search tasks" />
+  <button type="submit">Search</button>
+</form>
+<form th:action="@{/tasks/add}" method="get">
+  <button type="submit" class="button">Add New Task</button>
+</form>
+<table border="1">
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Assigned To</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="task : ${tasks}">
+    <td th:text="${task.title}"></td>
+    <td th:text="${task.description}"></td>
+    <td th:text="${task.user.username}"></td>
+  </tr>
+  </tbody>
+</table>
+
+<div>
+  <a th:href="@{/tasks(page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
+  <span th:text="${currentPage + 1}"></span>
+  <a th:href="@{/tasks(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
+</div>
+</body>
+</html>

@@ -17,7 +17,7 @@ public class SecurityConfig {
     private final UserService userService;
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -25,19 +25,27 @@ public class SecurityConfig {
     public SecurityConfig(UserService userService) {
         this.userService = userService;
     }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/login", "/register").permitAll()
-                        .antMatchers("/admin/**").hasRole("ADMIN")
-                        .antMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**","/profile/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/tasks", true)
+                        .successHandler((request, response, authentication) -> {
+                            var authorities = authentication.getAuthorities();
+                            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+                                response.sendRedirect("/admin");
+                            } else {
+                                response.sendRedirect("/user/tasks");
+                            }
+                        })
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll); //оператор для класса :: -ссылаюсь на метод
@@ -45,7 +53,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception{
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userService)
                 .passwordEncoder(passwordEncoder());

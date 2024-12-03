@@ -1,14 +1,9 @@
 package com.example.task_app_lab5.model;
-
 import jakarta.persistence.*;
-
-import javax.management.relation.Role;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-//@Table(name="user_table")
 public class User_table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +13,7 @@ public class User_table {
     private String email;
     private  byte[] photo;
     private LocalDate createdAt;
-    //@Enumerated
+   @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")
@@ -28,14 +23,25 @@ public class User_table {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.createdAt = LocalDate.from(LocalDateTime.now());
+        this.createdAt = LocalDate.now();
     }
 
     public User_table() {
     }
 
+    public void setRole(String roleUser) {
+        this.role = Role.valueOf(roleUser.toUpperCase());
+    }
+
+    public enum Role {
+        ADMIN, USER
+    }
+
     public long getId() {
         return id;
+    }
+    public Role getRole() {
+        return role;
     }
 
     public void setId(long id) {

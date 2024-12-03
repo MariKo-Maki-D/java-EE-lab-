@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -20,11 +22,19 @@ public class UserService implements UserDetailsService {
             System.out.println("User not found!");
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles("USER")
-                .build();
+        if (Objects.equals(user.getUsername(), "admin")){
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(user.getUsername())
+                    .password(user.getPassword())
+                    .roles("ADMIN")
+                    .build();
+        }
+        else{
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(user.getUsername())
+                    .password(user.getPassword())
+                    .roles("USER")
+                    .build();
+        }
     }
 }

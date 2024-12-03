@@ -1,6 +1,4 @@
 package com.example.task_app_lab5.controller;
-
-import com.example.task_app_lab5.model.Category;
 import com.example.task_app_lab5.model.Tasks;
 import com.example.task_app_lab5.model.User_table;
 import com.example.task_app_lab5.reposiory.CategoryRepo;
@@ -9,6 +7,7 @@ import com.example.task_app_lab5.reposiory.UserRepo;
 import com.example.task_app_lab5.service.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/user")
 public class TaskController {
     @Autowired
     private TaskRepo taskRepository;
@@ -35,33 +35,18 @@ public class TaskController {
 
 
     @GetMapping("/tasks")
+    @PreAuthorize("hasRole('USER')")
     public String viewTasks(@AuthenticationPrincipal UserDetails userDetails, Model model,
                             @RequestParam(value = "search", required = false) String search,
                             @RequestParam(value = "page", defaultValue = "0") int page,
-                            @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page tasksPage = taskService.getTasks(search, page, size);
+                            @RequestParam(value = "size", defaultValue = "3") int size) {
+        Page<Tasks> tasksPage = taskService.getTasks(search, page, size);
         model.addAttribute("tasksPage", tasksPage);
         model.addAttribute("search", search);
         User_table user = userRepo.findByUsername(userDetails.getUsername());
         List<Tasks> tasks = taskRepository.findByUserId(user.getId());
         model.addAttribute("tasks", tasks);
         return "tasks";
-    }
-
-    @GetMapping("/tasks/add")
-    public String showAddTaskForm(Model model){
-        model.addAttribute("task", new Tasks());
-        List<Category> categories = categoryRepository.findAll();
-        model.addAttribute("categories", categories);
-        return "addTask";
-    }
-
-    @PostMapping("/tasks/add")
-    public String addTask(@ModelAttribute Tasks task, @AuthenticationPrincipal UserDetails userDetails){
-        User_table user = userRepo.findByUsername(userDetails.getUsername());
-        task.setUser(user);
-        taskRepository.save(task);
-        return "redirect:/tasks";
     }
 
     @GetMapping("/tasks/edit/{id}")

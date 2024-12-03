@@ -32,6 +32,7 @@ public class AuthController {
             return "register";
         } else{
             User_table user = new User_table(username, passwordEncoder.encode(password), email);
+            user.setRole("USER");
             userRepository.save(user);
         }
 

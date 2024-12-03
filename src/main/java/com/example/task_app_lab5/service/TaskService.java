@@ -4,9 +4,7 @@ import com.example.task_app_lab5.reposiory.TaskRepo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -16,8 +14,8 @@ public class TaskService {
     public TaskService(TaskRepo taskRepo){
         this.taskRepo = taskRepo;
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<Tasks> getAllTasks()
+    //@PreAuthorize("hasRole('ADMIN')")
+    //public List<Tasks> getAllTasks(){};
 
     public Page<Tasks> getTasks(String search, int page, int size){
         Pageable pageable = PageRequest.of(page,size);
