@@ -2,14 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Tasks</title>
+  <style>
+    form {
+      margin-bottom: 15px;
+    }
+    table th, table td {
+      padding: 10px;}
+  </style>
 </head>
 <body>
 <h1>Tasks</h1>
-<form method="get" th:action="@{/tasks}">
+<form method="get" th:action="@{/admin/tasks}">
   <input type="text" name="search" placeholder="Search tasks" />
   <button type="submit">Search</button>
 </form>
-<form th:action="@{/tasks/add}" method="get">
+<form th:action="@{/admin/tasks/add}" method="get">
   <button type="submit" class="button">Add New Task</button>
 </form>
 <table border="1">
@@ -30,9 +37,9 @@
 </table>
 
 <div>
-  <a th:href="@{/tasks(page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
+  <a th:href="@{/admin/tasks(page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
   <span th:text="${currentPage + 1}"></span>
-  <a th:href="@{/tasks(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
+  <a th:href="@{/admin/tasks(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
 </div>
 </body>
 </html>

@@ -40,7 +40,9 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .successHandler((request, response, authentication) -> {
                             var authorities = authentication.getAuthorities();
-                            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+                            System.out.println("Authenticated user: " + authentication.getName());
+                            System.out.println("Authorities: " + authorities);
+                            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                                 response.sendRedirect("/admin");
                             } else {
                                 response.sendRedirect("/user/tasks");

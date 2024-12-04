@@ -23,8 +23,6 @@ import java.util.Base64;
 public class UserController {
     @Autowired
     private final UserRepo userRepo;
-    @Autowired
-    private UserService userService;
     public UserController(UserRepo userRepo){
         this.userRepo = userRepo;
     }

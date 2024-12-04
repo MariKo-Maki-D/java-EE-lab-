@@ -7,6 +7,9 @@ import com.example.task_app_lab5.reposiory.UserRepo;
 import com.example.task_app_lab5.service.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,6 +49,7 @@ public class TaskController {
         User_table user = userRepo.findByUsername(userDetails.getUsername());
         List<Tasks> tasks = taskRepository.findByUserId(user.getId());
         model.addAttribute("tasks", tasks);
+        model.addAttribute("tasksPage", tasksPage);//?
         return "tasks";
     }
 
@@ -53,6 +57,7 @@ public class TaskController {
     public String showEditTaskForm(@PathVariable("id") long id, Model model){
     Optional<Tasks> task = taskRepository.findById(id);
     if (task.isEmpty()) {
+        System.out.println("Task does not exist with ID:"+ id);
         throw new IllegalArgumentException("task doesnt exist with Id: " + id);
     }
     model.addAttribute("task", task.get());
@@ -64,6 +69,7 @@ public class TaskController {
     public String editTask(@PathVariable("id") long id, Tasks updatedTask){
         Optional<Tasks> optionalTask = taskRepository.findById(id);
         if (!optionalTask.isPresent()){
+            System.out.println("Task does not exist with ID:"+ id);
             throw new IllegalArgumentException("task doesnt exist with Id: " + id);
         }
         Tasks task = optionalTask.get();
@@ -74,34 +80,53 @@ public class TaskController {
         task.setPriority(updatedTask.getPriority());
         task.setCategory(updatedTask.getCategory());
         taskRepository.save(task);
-        return "redirect:/tasks";
+        return "redirect:/user/tasks";
     }
     @GetMapping("tasks/delete/{id}")
     public String deleteTask (@PathVariable("id") long id){
         Tasks task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
         taskRepository.delete(task);
-        return "redirect:/tasks";
+        return "redirect:/user/tasks";
     }
 
     @GetMapping("tasks/filter/status")
-    public String filterTaskbyStatus(@RequestParam("status") String status, @AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String filterTaskbyStatus(@RequestParam("status") String status,
+                                       @AuthenticationPrincipal UserDetails userDetails,
+                                       @RequestParam(value = "page", defaultValue = "0") int page,
+                                       @RequestParam(value = "size", defaultValue = "3") int size,
+                                       Model model) {
         User_table user = userRepo.findByUsername(userDetails.getUsername());
-        List<Tasks> tasks = taskRepository.findByUserIdAndStatus(user.getId(), status);
-        model.addAttribute("tasks", tasks);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Tasks> tasksPage = taskRepository.findByUserIdAndStatus(user.getId(), status, pageable);
+        model.addAttribute("tasksPage", tasksPage);
+        model.addAttribute("status", status);
         return "tasks";
     }
+
+
     @GetMapping("tasks/filter/category")
-    public String filterTaskbyCategory(@RequestParam("categoryId") long categoryId, @AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String filterTaskbyCategory(@RequestParam("categoryId") long categoryId,
+                                       @AuthenticationPrincipal UserDetails userDetails,
+                                       @RequestParam(value = "page", defaultValue = "0") int page,
+                                       @RequestParam(value = "size", defaultValue = "3") int size,
+                                       Model model) {
         User_table user = userRepo.findByUsername(userDetails.getUsername());
-        List<Tasks> tasks = taskRepository.findByUserIdAndCategoryId(user.getId(), categoryId);
-        model.addAttribute("tasks", tasks);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Tasks> tasksPage = taskRepository.findByUserIdAndCategoryId(user.getId(), categoryId, pageable);
+        model.addAttribute("tasksPage", tasksPage);
+        model.addAttribute("categoryId", categoryId);
         return "tasks";
-    }
+}
+
+
     @GetMapping("/tasks/sort/dueDate")
-    public String sortTasksByDueDate(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String sortTasksByDueDate(@AuthenticationPrincipal UserDetails userDetails, Model model,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "3") int size) {
         User_table user = userRepo.findByUsername(userDetails.getUsername());
-        List<Tasks> tasks = taskRepository.findByUserIdOrderByDueDateAsc(user.getId());
-        model.addAttribute("tasks", tasks);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dueDate").ascending());
+        Page<Tasks> tasksPage = taskRepository.findByUserId(user.getId(), pageable);
+        model.addAttribute("tasksPage", tasksPage);
         return "tasks";
     }
 

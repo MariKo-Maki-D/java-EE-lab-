@@ -68,17 +68,17 @@
 <h1>Your Tasks</h1>
 
 <div class="search-container">
-    <form th:action="@{/tasks}" method="get">
+    <form th:action="@{/user/tasks}" method="get">
         <input type="text" name="search" placeholder="Search tasks..." th:value="${search}" />
         <button type="submit" class="button">Search</button>
     </form>
 </div>
 
-<form th:action="@{/tasks/sort/dueDate}" method="get">
+<form th:action="@{/user/tasks/sort/dueDate}" method="get">
     <button type="submit" class="button">Sort by Due Date</button>
 </form>
 
-<form th:action="@{/tasks/filter/status}" method="get">
+<form th:action="@{/user/tasks/filter/status}" method="get">
     <label for="status">Filter by Status:</label>
     <select id="status" name="status">
         <option value="Not Started">Not Started</option>
@@ -88,7 +88,7 @@
     <button type="submit" class="button">Filter</button>
 </form>
 
-<form th:action="@{/tasks/filter/category}" method="get">
+<form th:action="@{/user/tasks/filter/category}" method="get">
     <label for="category">Filter by category:</label>
     <select id="category" name="categoryId">
         <option value="3">Study</option>
@@ -112,6 +112,9 @@
     </tr>
     </thead>
     <tbody>
+    <tr th:if="${tasksPage.isEmpty()}">
+        <td colspan="7">No tasks found</td>
+    </tr>
     <tr th:each="task : ${tasksPage.content}">
         <td th:text="${task.title}"></td>
         <td th:text="${task.description}"></td>
@@ -120,10 +123,10 @@
         <td th:text="${task.status}"></td>
         <td th:text="${task.category.name}"></td>
         <td>
-            <form th:action="@{/tasks/edit/{id}(id=${task.id})}" method="get" style="display:inline;">
+            <form th:action="@{/user/tasks/edit/{id}(id=${task.id})}" method="get" style="display:inline;">
                 <button type="submit" class="button">Edit</button>
             </form>
-            <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get" style="display:inline;">
+            <form th:action="@{/user/tasks/delete/{id}(id=${task.id})}" method="get" style="display:inline;">
                 <button type="submit" class="button delete" onclick="return confirm('Are you sure you want to delete this task?')">Delete</button>
             </form>
         </td>
@@ -133,9 +136,9 @@
 
 <div class="pagination">
     <span>Page: <span th:text="${tasksPage.number + 1}"></span> of <span th:text="${tasksPage.totalPages}"></span></span>
-    <div>
-        <a th:href="@{/tasks(search=${search}, page=${tasksPage.number - 1}, size=${tasksPage.size})}" th:if="${tasksPage.hasPrevious()}">Previous</a>
-        <a th:href="@{/tasks(search=${search}, page=${tasksPage.number + 1}, size=${tasksPage.size})}" th:if="${tasksPage.hasNext()}">Next</a>
+    <div th:if="${tasksPage.totalPages > 1}">
+        <a th:href="@{/user/tasks(search=${search}, page=${tasksPage.number - 1}, size=${tasksPage.size})}" th:if="${tasksPage.hasPrevious()}">Previous</a>
+        <a th:href="@{/user/tasks(search=${search}, page=${tasksPage.number + 1}, size=${tasksPage.size})}" th:if="${tasksPage.hasNext()}">Next</a>
     </div>
 </div>
 </body>

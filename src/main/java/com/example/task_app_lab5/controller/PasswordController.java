@@ -47,12 +47,12 @@ public class PasswordController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User_table user = userRepo.findByUsername(username);
         passwordForgotService.sendNewPassword(user.getEmail());
-        if (user != null) {
-            passwordForgotService.sendNewPassword(user.getEmail());
-            model.addAttribute("message", "A new password has been sent to your email.");
-        } else {
-            model.addAttribute("error", "Failed to reset password. User not found.");
-        }
+//        if (user != null) {
+//            passwordForgotService.sendNewPassword(user.getEmail());
+//            model.addAttribute("message", "A new password has been sent to your email.");
+//        } else {
+//            model.addAttribute("error", "Failed to reset password. User not found.");
+//        }
         return "change-password";
     }
 }

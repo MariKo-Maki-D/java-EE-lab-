@@ -54,7 +54,7 @@ public class AdminController {
     public String viewTasks(Model model,
                             @RequestParam(value = "search", required = false) String search,
                             @RequestParam(value = "page", defaultValue = "0") int page,
-                            @RequestParam(value = "size", defaultValue = "10") int size) {
+                            @RequestParam(value = "size", defaultValue = "3") int size) {
         Page<Tasks> tasksPage = taskService.getTasks(search, page, size);
         model.addAttribute("tasks", tasksPage.getContent());
         model.addAttribute("currentPage", tasksPage.getNumber());

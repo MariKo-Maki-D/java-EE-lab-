@@ -15,4 +15,8 @@ public interface TaskRepo extends JpaRepository<Tasks, Long> {
 
     List<Tasks> findByUserIdOrderByDueDateAsc(long id);
     Page<Tasks> findByTitleContainingIgnoreCase(@Param("title") String title, Pageable pageable);
+    Page<Tasks> findByUserId(Long userId, Pageable pageable);
+    Page<Tasks> findByUserIdAndCategoryId(Long userId, Long categoryId, Pageable pageable);
+    Page<Tasks> findByUserIdAndStatus(Long userId, String status, Pageable pageable);
+
 }
