@@ -1,4 +1,5 @@
 package com.example.task_app_lab5.service;
+import com.example.task_app_lab5.model.Tasks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,11 +12,11 @@ public class AdminService {
     private JavaMailSender mailSender;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void sendTaskNotification(String userEmail, String taskDetails) {
+    public void sendTaskNotification(String userEmail, Tasks task) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userEmail);
         message.setSubject("New Task Assigned");
-        message.setText("You have a new task: " + taskDetails);
+        message.setText("You have a new task: " + task.getTitle() + " - " +task.getDescription());
         mailSender.send(message);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.task_app_lab5.controller;
-
 import com.example.task_app_lab5.model.User_table;
 import com.example.task_app_lab5.reposiory.UserRepo;
-import com.example.task_app_lab5.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,13 +28,13 @@ public class UserController {
     @GetMapping
     public String viewProfile(Model model, @AuthenticationPrincipal UserDetails userDetails){
         User_table user = userRepo.findByUsername(userDetails.getUsername());
-        //System.out.println("Authenticated username: " + userDetails.getUsername());
         if (user == null) {
             throw new RuntimeException("User not found!");
         }
         model.addAttribute("user", user);
         return "profile";
     }
+
     @GetMapping("/edit")
     public String editProfileForm(@AuthenticationPrincipal UserDetails userDetails, Model model){
         User_table user = userRepo.findByUsername(userDetails.getUsername());
@@ -72,7 +70,8 @@ public class UserController {
                 user.setPhoto(photo.getBytes());
                 userRepo.save(user);
                 String base64Image = Base64.getEncoder().encodeToString(user.getPhoto());
-                redirectAttributes.addFlashAttribute("base64Image", base64Image);                System.out.println("Base64 Image String: " + base64Image);
+                redirectAttributes.addFlashAttribute("base64Image", base64Image);
+                System.out.println("Base64 Image String: " + base64Image);
             } catch (IOException e) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Error while uploading the photo");
                 e.printStackTrace();

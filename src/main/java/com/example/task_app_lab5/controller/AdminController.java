@@ -10,12 +10,9 @@ import com.example.task_app_lab5.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
@@ -81,7 +78,7 @@ public class AdminController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
         task.setUser(user);
         taskRepo.save(task);
-        adminService.sendTaskNotification(user.getEmail(), String.valueOf(task));
+        adminService.sendTaskNotification(user.getEmail(), task);
         return "redirect:/admin/tasks";
     }
 }

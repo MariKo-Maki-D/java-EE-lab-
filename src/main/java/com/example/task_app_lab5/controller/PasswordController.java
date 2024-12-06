@@ -37,7 +37,6 @@ public class PasswordController {
             model.addAttribute("error", "Old password is incorrect");
             return "change-password";
         }
-
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepo.save(user);
         return "redirect:/profile";

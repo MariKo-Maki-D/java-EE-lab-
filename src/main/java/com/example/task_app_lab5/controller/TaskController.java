@@ -49,7 +49,6 @@ public class TaskController {
         User_table user = userRepo.findByUsername(userDetails.getUsername());
         List<Tasks> tasks = taskRepository.findByUserId(user.getId());
         model.addAttribute("tasks", tasks);
-        model.addAttribute("tasksPage", tasksPage);//?
         return "tasks";
     }
 
@@ -102,21 +101,18 @@ public class TaskController {
         model.addAttribute("status", status);
         return "tasks";
     }
-
-
     @GetMapping("tasks/filter/category")
-    public String filterTaskbyCategory(@RequestParam("categoryId") long categoryId,
-                                       @AuthenticationPrincipal UserDetails userDetails,
-                                       @RequestParam(value = "page", defaultValue = "0") int page,
-                                       @RequestParam(value = "size", defaultValue = "3") int size,
-                                       Model model) {
+    public String filterTasksByCategory(@AuthenticationPrincipal UserDetails userDetails, Model model,
+                                        @RequestParam("categoryId") Long categoryId,
+                                        @RequestParam(value= "page", defaultValue = "0") int page,
+                                        @RequestParam(value = "size", defaultValue = "3") int size){
+        Pageable pageable =PageRequest.of(page, size) ;
         User_table user = userRepo.findByUsername(userDetails.getUsername());
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Tasks> tasksPage = taskRepository.findByUserIdAndCategoryId(user.getId(), categoryId, pageable);
-        model.addAttribute("tasksPage", tasksPage);
+        Page<Tasks> tasks = taskRepository.findByUserIdAndCategoryId(user.getId(), categoryId, pageable);
+        model.addAttribute("tasksPage", tasks);
         model.addAttribute("categoryId", categoryId);
-        return "tasks";
-}
+        return "/tasks";
+    }
 
 
     @GetMapping("/tasks/sort/dueDate")
